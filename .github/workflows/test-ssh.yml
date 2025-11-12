@@ -1,19 +1,40 @@
-name: Test SSH Connection
+name: Deploy to VPS
 
 on:
-  workflow_dispatch: # permet de lancer manuellement le workflow depuis GitHub
+  push:
+    branches:
+      - main # ou la branche que tu veux déployer automatiquement
 
 jobs:
-  ssh-test:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Test SSH to VPS
+      # 1️⃣ Récupère le code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ Installer Docker (optionnel, si GitHub runner)
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # 3️⃣ Déployer via SSH
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.VPS_IP }} # ton IP ou nom de domaine
-          username: ${{ secrets.VPS_USER }} # par exemple 'beb'
-          key: ${{ secrets.VPS_SSH_KEY }} # ta clé privée stockée comme secret
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
           debug: true
-          port: 2222 # <- ton port SSH si différent
           script: |
-            echo "Connexion SSH réussie !"
+            # On va se placer dans le dossier de l'app
+            cd ~/apps/my_site || mkdir -p ~/apps/my_site && cd ~/apps/my_site
+
+            # Pull du code si nécessaire
+            git fetch --all
+            git reset --hard origin/main
+
+            # Docker compose build et up
+            docker compose -f docker-compose.prod.yml down --volumes --rmi all
+            docker compose -f docker-compose.prod.yml up -d --build
