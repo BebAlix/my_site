@@ -26,7 +26,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd ~/apps/my_site || mkdir -p ~/apps/my_site && cd ~/apps/my_site
+            cd ~/apps/my_site
             git fetch --all
             git reset --hard origin/main
             docker compose -f docker-compose.prod.yml down --volumes --rmi all
