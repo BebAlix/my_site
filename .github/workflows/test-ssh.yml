@@ -10,7 +10,7 @@ jobs:
       - name: Test SSH to VPS
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.VPS_HOST }} # ton IP ou nom de domaine
+          host: ${{ secrets.VPS_IP }} # ton IP ou nom de domaine
           username: ${{ secrets.VPS_USER }} # par exemple 'beb'
           key: ${{ secrets.VPS_SSH_KEY }} # ta clé privée stockée comme secret
           script: |
