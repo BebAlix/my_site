@@ -25,16 +25,9 @@ jobs:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          debug: true
           script: |
-            # On va se placer dans le dossier de l'app
             cd ~/apps/my_site || mkdir -p ~/apps/my_site && cd ~/apps/my_site
-
-            # Pull du code si nécessaire
             git fetch --all
             git reset --hard origin/main
-
-            # Docker compose build et up
             docker compose -f docker-compose.prod.yml down --volumes --rmi all
             docker compose -f docker-compose.prod.yml up -d --build
