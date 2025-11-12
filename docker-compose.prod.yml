@@ -32,6 +32,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: frontend_prod
+    env_file:
+      - ./.env # depuis backend, remonte d'un niveau vers la racine
     restart: always
     ports:
       - "80:80"

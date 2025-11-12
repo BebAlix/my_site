@@ -7,22 +7,24 @@ interface User {
   name: string
 }
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') ?? '', // string toujours
+    token: localStorage.getItem('token') ?? '',
     user: null as User | null,
   }),
 
   actions: {
     async login(email: string, password: string) {
-      const res = await axios.post('http://localhost:3000/auth/login', { email, password })
+      const res = await axios.post(`${API_URL}/auth/login`, { email, password })
       this.token = res.data.token ?? ''
       localStorage.setItem('token', this.token)
     },
 
     async fetchProfile() {
       if (!this.token) return
-      const res = await axios.get('http://localhost:3000/auth/profile', {
+      const res = await axios.get(`${API_URL}/auth/profile`, {
         headers: { Authorization: `Bearer ${this.token}` },
       })
       this.user = res.data
@@ -30,7 +32,7 @@ export const useAuthStore = defineStore('auth', {
 
     async updateProfile(data: { email?: string; name?: string; password?: string }) {
       if (!this.user) return
-      const res = await axios.patch('http://localhost:3000/users/me', data, {
+      const res = await axios.patch(`${API_URL}/users/me`, data, {
         headers: { Authorization: `Bearer ${this.token}` },
       })
       this.user = res.data
@@ -42,9 +44,8 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('token')
     },
 
-    // si tu veux signup, il faut le définir explicitement
     async signup(payload: { email: string; password: string; name?: string }) {
-      const res = await axios.post('http://localhost:3000/auth/signup', payload)
+      const res = await axios.post(`${API_URL}/auth/signup`, payload)
       this.token = res.data.token
       localStorage.setItem('token', this.token)
       await this.fetchProfile()

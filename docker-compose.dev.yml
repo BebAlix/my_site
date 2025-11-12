@@ -35,6 +35,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     container_name: frontend
+    env_file:
+      - ./.env # depuis backend, remonte d'un niveau vers la racine
     volumes:
       - ./frontend:/app
       - /app/node_modules

@@ -29,5 +29,5 @@ jobs:
             cd ~/apps/my_site
             git fetch --all
             git reset --hard origin/main
-            docker compose -f docker-compose.prod.yml down --volumes --rmi all
+            docker compose -f docker-compose.prod.yml down --rmi all
             docker compose -f docker-compose.prod.yml up -d --build
