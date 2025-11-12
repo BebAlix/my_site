@@ -13,6 +13,7 @@ jobs:
           host: ${{ secrets.VPS_IP }} # ton IP ou nom de domaine
           username: ${{ secrets.VPS_USER }} # par exemple 'beb'
           key: ${{ secrets.VPS_SSH_KEY }} # ta clé privée stockée comme secret
+          debug: true
           port: 2222 # <- ton port SSH si différent
           script: |
             echo "Connexion SSH réussie !"
