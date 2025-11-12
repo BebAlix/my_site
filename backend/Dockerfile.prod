@@ -3,21 +3,18 @@
 # --------------------
 FROM node:20-alpine AS build
 
-# Installer pnpm
 RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copier les fichiers de lock et package.json
 COPY package.json pnpm-lock.yaml ./
-
-# Installer toutes les dépendances (dev + prod)
 RUN pnpm install
 
-# Copier le reste du projet
 COPY . .
+COPY prisma ./prisma
 
-RUN pnpm prisma generate
+# Générer le client Prisma
+RUN pnpm prisma generate --schema ./prisma/schema.prisma
 
 # Build TypeScript / Nest
 RUN pnpm run build
@@ -31,17 +28,14 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copier package.json et pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
-
-# Installer uniquement les dépendances de production
 RUN pnpm install --prod
 
-# Copier le build depuis l’étape build
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/generated ./generated
 
-# Exposer le port
 EXPOSE 3000
 
-# Démarrage
-CMD ["node", "dist/main.js"]
+# Script d'entrée pour automatiser les migrations
+CMD ["sh", "-c", "pnpm prisma migrate deploy --schema ./prisma/schema.prisma && pnpm prisma generate --schema ./prisma/schema.prisma && node dist/main.js"]
