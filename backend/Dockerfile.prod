@@ -17,6 +17,8 @@ RUN pnpm install
 # Copier le reste du projet
 COPY . .
 
+RUN pnpm prisma generate
+
 # Build TypeScript / Nest
 RUN pnpm run build
 
