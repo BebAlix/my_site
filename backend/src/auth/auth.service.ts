@@ -41,7 +41,6 @@ export class AuthService {
 
   async signIn(signIndto: SignInDto) {
     const { email, password } = signIndto;
-
     const user = await this.prisma.user.findUnique({
       where: { email },
     });

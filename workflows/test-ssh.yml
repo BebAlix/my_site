@@ -1,0 +1,18 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch: # permet de lancer manuellement le workflow depuis GitHub
+
+jobs:
+  ssh-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test SSH to VPS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_HOST }} # ton IP ou nom de domaine
+          username: ${{ secrets.VPS_USER }} # par exemple 'beb'
+          key: ${{ secrets.VPS_SSH_KEY }} # ta clé privée stockée comme secret
+          script: |
+            echo "Connexion SSH réussie !"
+            ls -la /home/beb

@@ -23,7 +23,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('signin')
+  @Post('login')
   async signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
