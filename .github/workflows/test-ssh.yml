@@ -1,0 +1,33 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # ou la branche que tu veux déployer automatiquement
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Récupère le code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ Installer Docker (optionnel, si GitHub runner)
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # 3️⃣ Déployer via SSH
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/apps/my_site || mkdir -p ~/apps/my_site && cd ~/apps/my_site
+            git fetch --all
+            git reset --hard origin/main
+            docker compose -f docker-compose.prod.yml down --volumes --rmi all
+            docker compose -f docker-compose.prod.yml up -d --build
