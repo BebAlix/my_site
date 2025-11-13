@@ -2,20 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Installer pnpm globalement
-RUN npm install -g pnpm
+COPY package.json ./
 
-# Copier uniquement les fichiers de dépendances
-COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install
 
-# Installer les dépendances
-RUN pnpm install --frozen-lockfile
-
-# Copier tout le code source
 COPY . .
 
-# Exposer le port de l'API
 EXPOSE 3000
 
-# Lancer le serveur en mode dev avec watch pour hot reload
-CMD ["pnpm", "run", "start:dev"]
+RUN pnpm prisma generate
+
+CMD ["sh", "-c", "pnpm prisma migrate dev --name init && pnpm run start:dev"]

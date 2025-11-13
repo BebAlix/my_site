@@ -2,20 +2,12 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Installer pnpm
-RUN npm install -g pnpm
+COPY package.json ./
 
-# Copier package.json et pnpm-lock.yaml
-COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install
 
-# Installer les dépendances
-RUN pnpm install --frozen-lockfile
-
-# Copier tout le code source
 COPY . .
 
-# Exposer le port Vite
 EXPOSE 5173
 
-# Lancer le serveur de dev avec hot reload
-CMD ["pnpm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["pnpm", "run", "dev"]

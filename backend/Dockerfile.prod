@@ -1,41 +1,18 @@
-# --------------------
-# Étape build
-# --------------------
-FROM node:20-alpine AS build
-
-RUN npm install -g pnpm
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+COPY package.json ./
+RUN npm install -g pnpm && pnpm install
 
 COPY . .
-COPY prisma ./prisma
 
 # Générer le client Prisma
-RUN pnpm prisma generate --schema ./prisma/schema.prisma
+RUN pnpm run build && pnpm prisma generate
 
-# Build TypeScript / Nest
-RUN pnpm run build
-
-# --------------------
-# Étape production
-# --------------------
-FROM node:20-alpine AS prod
-
-RUN npm install -g pnpm
-
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod
-
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/generated ./generated
-
+# Expose le port de l'API
 EXPOSE 3000
 
-# Script d'entrée pour automatiser les migrations
-CMD ["sh", "-c", "pnpm prisma migrate deploy --schema ./prisma/schema.prisma && pnpm prisma generate --schema ./prisma/schema.prisma && node dist/main.js"]
+# Commande prod
+CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm run start:prod"]
+# Assure-toi d'avoir "start" dans package.json pour lancer le serveur prod

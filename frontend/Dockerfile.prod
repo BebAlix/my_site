@@ -1,17 +1,26 @@
-FROM node:20-alpine as build
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm
-RUN pnpm install --frozen-lockfile
+COPY package.json ./
+RUN npm install -g pnpm && pnpm install
 
 COPY . .
-RUN pnpm build
 
+# Build Vite pour prod
+RUN pnpm run build
 
-# Serve static files with nginx
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+FROM nginx:alpine AS production
+
+# Supprime les fichiers par défaut de Nginx
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copie les fichiers build depuis le stage builder
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose le port standard HTTP
 EXPOSE 80
+
+# Commande par défaut
 CMD ["nginx", "-g", "daemon off;"]
+
