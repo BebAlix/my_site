@@ -20,10 +20,7 @@ const router = useRouter()
 const email = ref('')
 const password = ref('')
 
-console.log('API URL utilisée :', import.meta.env.VITE_API_URL)
 const submit = async () => {
-  console.log('coucou')
-  console.log('API URL utilisée :', import.meta.env.VITE_API_URL)
   await auth.login(email.value, password.value)
   router.push('/profile')
 }
