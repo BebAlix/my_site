@@ -8,7 +8,7 @@ RUN npm install -g pnpm && pnpm install
 COPY . .
 
 # Générer le client Prisma
-RUN pnpm run build && pnpm prisma generate
+RUN pnpm prisma generate && pnpm run build
 
 # Expose le port de l'API
 EXPOSE 3000
