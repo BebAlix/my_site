@@ -28,11 +28,21 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: frontend-prod
-    restart: always
-    ports:
-      - "80:80" # Nginx HTTP
+    volumes:
+      - frontend_dist:/app/dist
     depends_on:
       - backend
 
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - frontend_dist:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/default.conf:ro
+    depends_on:
+      - frontend
+
 volumes:
+  frontend_dist:
   database_prod:
