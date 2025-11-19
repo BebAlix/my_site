@@ -34,14 +34,25 @@ services:
       - backend
 
   nginx:
-    image: nginx:alpine
+    image: nginx
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
     volumes:
       - frontend_dist:/usr/share/nginx/html
       - ./nginx/nginx.conf:/etc/nginx/default.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - frontend
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email ewenquesnel@gmail.com -d ewenquesnel.fr --agree-tos
 
 volumes:
   frontend_dist:
