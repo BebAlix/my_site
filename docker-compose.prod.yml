@@ -53,7 +53,8 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email ewenquesnel@gmail.com -d ewenquesnel.fr --agree-tos
+    entrypoint: >
+      sh -c "certbot renew --webroot -w /var/www/certbot --quiet && nginx -s reload"
 
 volumes:
   frontend_dist:
