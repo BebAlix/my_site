@@ -7,7 +7,7 @@ interface User {
   name: string
 }
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = '/api' // import.meta.env.VITE_API_URL
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
