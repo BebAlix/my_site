@@ -34,3 +34,5 @@ coverage/
 
 # Mac
 *.DS_Store
+
+certbot/
