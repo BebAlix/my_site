@@ -11,4 +11,10 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/hints",
   ],
+
+  runtimeConfig: {
+    public: {
+      apiBase: import.meta.env.API_URL,
+    },
+  },
 });
