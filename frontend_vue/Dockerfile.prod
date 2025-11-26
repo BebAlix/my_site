@@ -9,4 +9,3 @@ COPY . .
 
 # Build Vite pour prod
 RUN pnpm run build
-RUN pnpm nuxi generate

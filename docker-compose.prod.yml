@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: frontend-prod
     volumes:
-      - frontend_dist:/app/dist
+      - frontend_dist:/app/.output/public
     depends_on:
       - backend
 
